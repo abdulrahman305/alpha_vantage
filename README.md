@@ -14,6 +14,7 @@ For code-less access to financial market data, you may also consider [Wisesheets
 
 ## News
 
+* From version 3.0.0 onwards, all options, commodities, and economic indicators are supported, as well as various additional features in alpha intelligence and fundamental data. All sector performance, extended intraday, and the FCAS crypto rating have been deprecated. Support for the month parameter for technical indicators and entitlement, as necessary, have also been added.
 * From version 2.3.0 onwards, fundamentals data and extended intraday is supported.
 * From version 2.2.0 onwards, asyncio support now provided. See below for more information. 
 * From version 2.1.3 onwards, [rapidAPI](https://rapidapi.com/alphavantage/api/alpha-vantage/) key integration is now available.
@@ -46,6 +47,17 @@ ts = TimeSeries(key='YOUR_API_KEY')
 # Get json object with the intraday data and another with  the call's metadata
 data, meta_data = ts.get_intraday('GOOGL')
 ```
+To query data from a specific month in history, you may use the 'month' parameter for various features.
+```python
+from alpha_vantage.timeseries import TimeSeries
+from alpha_vantage.techindicators import TechIndicators
+ts = TimeSeries(key='YOUR_API_KEY')
+ti = TechIndicators(key='YOUR_API_KEY')
+# Get json object with the 30-min interval intraday data and another with  the call's metadata for January, 2014.
+data, meta_data = ts.get_intraday('GOOGL', month='2014-01', interval='30min')
+#Get json object with the 30-min interval simple moving average (SMA) values and another with  the call's metadata for January, 2014.
+data, meta_data = ti.get_sma('GOOGL', month='2014-01', interval='30min')
+```
 You may also get a key from [rapidAPI](https://rapidapi.com/alphavantage/api/alpha-vantage-alpha-vantage-default). Use your rapidAPI key for the key variable, and set ```rapidapi=True```
 
 ```python
@@ -57,7 +69,7 @@ Internally there is a retries counter, that can be used to minimize connection e
 ```python
 ts = TimeSeries(key='YOUR_API_KEY',retries='YOUR_RETRIES')
 ```
-The library supports giving its results as json dictionaries (default), pandas dataframe (if installed) or csv, simply pass the parameter output_format='pandas' to change the format of the output for all the API calls in the given class. Please note that some API calls do not support the csv format (namely ```ForeignExchange, SectorPerformances and TechIndicators```) because the API endpoint does not support the format on their calls either.
+The library supports giving its results as json dictionaries (default), pandas dataframe (if installed) or csv, simply pass the parameter output_format='pandas' to change the format of the output for all the API calls in the given class. Please note that some API calls do not support the csv format (namely ```ForeignExchange and TechIndicators```) because the API endpoint does not support the format on their calls either.
 
 ```python
 ts = TimeSeries(key='YOUR_API_KEY',output_format='pandas')
@@ -119,26 +131,6 @@ plt.show()
 ```
 Giving us as output:
 ![alt text](images/docs_ti_msft_example.png?raw=True "MSFT minute value plot example")
-
-### Sector Performance
-We can also plot sector performance just as easy:
-
-```python
-from alpha_vantage.sectorperformance import SectorPerformances
-import matplotlib.pyplot as plt
-
-sp = SectorPerformances(key='YOUR_API_KEY', output_format='pandas')
-data, meta_data = sp.get_sector()
-data['Rank A: Real-Time Performance'].plot(kind='bar')
-plt.title('Real Time Performance (%) per Sector')
-plt.tight_layout()
-plt.grid()
-plt.show()
-```
-
-Giving us as output:
-
-![alt text](images/docs_sp_rt_example.png?raw=True "Real Time Sector Performance")
 
 ### Crypto currencies.
 
